@@ -1,0 +1,13 @@
+2011-11-21:
+  Provide interface for updating the amount of data.
+
+2011-08-29:
+  Containers are represented by strings instead of unsigned int.
+
+2011-08-10:
+  Initial version.
+
+  * qdft/Manager.hh: Provide the main functionalities for data flow
+    tracking of the same data.
+
+  * src/example.cc: Shows an example how to use the library.

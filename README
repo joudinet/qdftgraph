@@ -1,0 +1,49 @@
+       ________  ______________________                        .__     
+  _____\______ \ \_   _____/\__    ___/_______________  ______ |  |__  
+ / ____/|    |  \ |    __)    |    | / ___\_  __ \__  \ \____ \|  |  \ 
+< <_|  ||    `   \|     \     |    |/ /_/  >  | \// __ \|  |_> >   Y  \
+ \__   /_______  /\___  /     |____|\___  /|__|  (____  /   __/|___|  /
+    |__|       \/     \/           /_____/            \/|__|        \/ 
+
+----------------------------------------------------------------------
+
+Quantitive Data Flow Tracking graph (qDFTgraph) library.
+
+1) How to install
+2) How to use it
+
+*** HOW TO INSTALL ***
+
+  For general free software install rules, please refer to INSTALL
+  file.  This C++ library is based on Boost Graph Library (BGL). You
+  need a recent installation of this library and in case of a manual
+  installation you might need to tell to qDFTgraph where is located
+  your Boost installation. For example:
+
+  If you've installed one of the required libraries in a non classical
+  path, you may need to tell to configure how to find it. For example,
+  assume BGL headers are in $HOME/include and BGL libraries are in
+  $HOME/lib, the following command tell to configure where they are:
+  ./configure --with-boost=$HOME
+
+** Tips on manual installation of Boost library **
+  + under a Unix-like system:
+  extract boost archive then go in it and enter the two following
+  commands:  
+  $ ./bootstrap.sh --prefix=$HOME
+  $ ./b2 install
+  $ sudo ldconfig $HOME/lib
+
+  Now Boost is correctly installed in your $HOME directory. You just
+  have to tell to configure where to look for (as explained
+  previously).
+
+*** HOW TO USE IT ***
+
+  qDFTgraph is a header library, then it does not need to be compiled
+  first. The only thing needed is to include qdft.hh header in your
+  program. A example is provided inside src directory. Look at
+  src/example.cc for further information.
+
+	src/test_lib.cc is a file transfer simulator. It simulates transfers
+	of different sizes between a set of files.

@@ -1,0 +1,10 @@
+# Emacs auto save files
+*~
+# Generated files by autotools
+*.in
+aclocal.m4
+autom4te.cache/
+build/
+build-aux/
+configure
+m4/

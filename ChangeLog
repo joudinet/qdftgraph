@@ -1,0 +1,232 @@
+2012-11-12  Johan Oudinet  <oudinet@cs.tum.edu>
+
+	Fix a bug in simplification rule 5.
+	* include/qdft/manager.hxx: Do not apply simplification rule 5 if
+	u2 has children or other parents than u and s.
+	* src/example.cc: test for the DAG issue with simplification rule
+	5.
+
+2012-09-25  Johan Oudinet  <oudinet@cs.tum.edu>
+
+	Provide a simulator for file transfers.
+	* src/test_lib.cc: small program to simulate file transfers among
+	sensitive and non-sensitive containers.
+
+2012-09-10  Johan Oudinet  <oudinet@cs.tum.edu>
+
+	Fix reverting a transfer (c2v mapping was incorrect afterward) and
+	reverting a simplification rule attached to the source (use
+	current_src_ instead of src_).
+	* include/qdft/action.hh: Fix two bugs while reverting a transfer
+	or a simplification rule 1.
+
+2012-09-07  Johan Oudinet  <oudinet@cs.tum.edu>
+
+	Apply simplification rules on demand. Call max-flow algorithm only
+	when necessary.
+	* include/qdft/manager.hxx: Call max-flow only when transferring
+	to an existing container. Apply simplification rules only if the
+	SIMPLIFY variable is set.
+
+2012-09-06  Johan Oudinet  <oudinet@cs.tum.edu>
+
+	Implement simplification rule 5 and fix reverting simplification
+	rule 3 when the child has other parents.
+	* include/qdft/manager.hxx: Implement simplification rule 5
+	* include/qdft/action.hh: Add the rollback for simplification rule
+	5 and fix the rollback for simplification rule 3.
+	* src/example.cc (main): Test rollback for simplification rule 3
+	and 5.
+
+2012-07-27  Johan Oudinet  <oudinet@cs.tum.edu>
+
+	Add support for reverting any action (with possibility several
+	simplification rules).
+	* include/qdft/qdft.hh,
+	* include/qdft/qdft.hxx,
+	* include/qdft/manager.hh,
+	* include/qdft/manager.hxx: Rename revert_last_transfer into
+	revert_last_action.
+	* include/qdft/action.hh: Add the rollback for every
+	simplification rule.
+	* src/example.cc: Test rollback of every simplification rule.
+
+2012-07-25  Johan Oudinet  <oudinet@cs.tum.edu>
+
+	Add simplification rules 3 and 4.
+	* include/qdft/manager.hxx: Add simplification rules.
+
+2012-07-24  Johan Oudinet  <oudinet@cs.tum.edu>
+
+	New rollback system to revert the last action.
+	* include/qdft/qdft.hh,
+	* include/qdft/qdft.hxx,
+	* include/qdft/manager.hh,
+	* include/qdft/manager.hxx: Remove deprecated remove method (has
+	been replaced by truncate). Use a stack of actions to record the
+	previous actions in case a rollback is needed.
+	* include/Makefile.am,
+	* include/qdft/action.hh: New.
+	* src/example.cc: Test the rollback feature.
+
+2012-07-23  Johan Oudinet  <oudinet@cs.tum.edu>
+
+	Provide a new (correct) behavior for transferring and add the
+	truncate method.
+	* include/qdft/qdft.hh,
+	* include/qdft/qdft.hxx,
+	* include/qdft/manager.hh,
+	* include/qdft/manager.hxx: Change the transfer behavior and add
+	the truncate method.
+	* src/example.cc: Test the new interface.
+
+2012-07-03  Johan Oudinet  <oudinet@cs.tum.edu>
+
+	Fix priority issue in a check for self loop.
+	* include/qdft/manager.hxx (qdft): Add parentheses.
+
+2012-06-27  Johan Oudinet  <oudinet@kit.edu>
+
+	Avoid self loops in the graph. Otherwise, the maxflow algorithm
+	will fail.
+	* include/qdft/manager.hh,
+	* include/qdft/manager.hxx: do not transfer if src == dst.
+
+2011-12-02  Johan Oudinet  <oudinet@kit.edu>
+
+	Fix the bug that leads to a chain of fake sources.
+	* include/qdft/manager.hxx (set_data_amount): Call
+	remove_vertex_rec_ on the old source every time.
+	* src/test_lib.cc: Test that the bug, which appeared in last mode,
+	disappear.
+
+2011-11-25  Johan Oudinet  <oudinet@kit.edu>
+
+	Provide a third mode for updating the total amount of data.
+	* include/qdft/manager.hxx: Three modes for updating amount of data.
+	* include/qdft/types.hh: Rename the two previous modes and add the
+	third one.
+	* src/test_lib.cc: Test for the three modes.
+	* script/qdftgraph_pp.sh: Add the index to src_ nodes in order to
+	distinguish them.
+
+2011-11-23  Johan Oudinet  <oudinet@kit.edu>
+
+	Pretty printing for graphs.
+	* include/qdft/qdft.hh,
+	* include/qdft/qdft.hxx,
+	* include/qdft/manager.hh,
+	* include/qdft/manager.hxx: Provide save method for saving into a file.
+	* src/test_lib.cc: Tests for pretty printing.
+	* script/qdftgraph_pp.sh: New.
+
+2011-11-22  Johan Oudinet  <oudinet@kit.edu>
+
+	Add the possibility to assign a specific name when creating a new
+	data.
+	* include/qdft/qdft.hh,
+	* include/qdft/qdft.hxx: Can assign a specific name when creating
+	a new data.
+	* src/test_lib.cc: Tests for updating the amount of data.
+
+2011-11-21  Johan Oudinet  <oudinet@kit.edu>
+
+	Provide interface for updating the amount of data.
+	* include/qdft/qdft.hh,
+	* include/qdft/qdft.hxx,
+	* include/qdft/manager.hh,
+	* include/qdft/manager.hxx: Two modes for updating amount of data.
+	* include/qdft/types.hh: Two modes as a enum type.
+	* src/test_lib.cc: Tests for updating the amount of data.
+
+2011-11-11  Johan Oudinet  <oudinet@kit.edu>
+
+	New method for reverting the last transfer.
+	* include/qdft/qdft.hh,
+	* include/qdft/qdft.hxx,
+	* include/qdft/manager.hh,
+	* include/qdft/manager.hxx: New revert_last_transfer method.
+	* src/test_lib.cc: Tests for this method.
+
+2011-11-11  Johan Oudinet  <oudinet@kit.edu>
+
+	Provide a method to get the initial amount of data.
+	* include/qdft/qdft.hh,
+	* include/qdft/qdft.hxx,
+	* include/qdft/manager.hh,
+	* include/qdft/manager.hxx: Add get_initial_quantity method.
+	* src/test_lib.cc: Tests for this method.
+
+2011-11-11  Johan Oudinet  <oudinet@kit.edu>
+
+	New interface for handling multiple data and the library is now
+	available as a shared library too.
+	* include/qdft/qdft.hxx: New interface for handling multiple data.
+	* src/test_lib.cc: Tests for the new interface.
+	* configure.ac,
+	* include/Makefile.am,
+	* Makefile.am,
+	* src/Makefile.am: Use libtool for shared library.
+	* include/qdft/types.hh: New dname_type (std::string).
+
+2011-09-01  Johan Oudinet  <oudinet@kit.edu>
+
+	Provide API to set the capacity of an edge.
+	* include/qdft/manager.hh,
+	* include/qdft/manager.hxx: New set_edge_capacity method. transfer
+	returns the previous edge capacity.
+
+2011-09-01  Johan Oudinet  <oudinet@kit.edu>
+
+	Recursively delete fake vertices after removing one vertex.
+	* include/qdft/manager.hxx (remove): Use real_out_degree instead
+	of out_degree. Try to delete the father if the child was deleted.
+
+2011-08-30  Johan Oudinet  <oudinet@kit.edu>
+
+	Update the vertex indexes after deleting a vertex.
+	* include/qdft/manager.hh,
+	* include/qdft/manager.hxx (remove_vertex_): Handle the deletion
+	of a vertex in this private method.
+
+2011-08-29  Johan Oudinet  <oudinet@kit.edu>
+
+	Use Doxygen for the documentation.
+	* doc/Doxyfile.in: New.
+	* doc/Makefile.am: New.
+
+2011-08-29  Johan Oudinet  <oudinet@kit.edu>
+
+	Fix a bug that could appear when a container is removed.
+	* include/qdft/manager.hxx (remove): Fix bug when deleting nodes.
+
+2011-08-29  Johan Oudinet  <oudinet@kit.edu>
+
+	Container's name are now represented by strings instead of size_t.
+	* include/qdft/types.hh: Change cname_type to std::string.
+	* include/qdft/manager.hh: Provide a hash function for const
+	string and use const type as the hash_map key.
+	* src/example.cc: Adapt the example to use strings for container's
+	names.
+
+2011-08-10  Johan Oudinet  <oudinet@kit.edu>
+
+	Initial version.
+	* AUTHORS: New.
+	* bootstrap.sh: New.
+	* ChangeLog: New.
+	* configure.ac: New.
+	* COPYING: New.
+	* include/Makefile.am: New.
+	* include/qdft/graph.hh: New.
+	* include/qdft/manager.hh: New.
+	* include/qdft/manager.hxx: New.
+	* include/qdft/qdft.hh: New.
+	* include/qdft/types.hh: New.
+	* INSTALL: New.
+	* m4/boost.m4: New.
+	* Makefile.am: New.
+	* NEWS: New.
+	* README: New.
+	* src/example.cc: New.
+	* src/Makefile.am: New.
