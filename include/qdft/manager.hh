@@ -1,4 +1,4 @@
-// Copyright (C) 2011, 2012 Johan Oudinet <oudinet@cs.tum.edu>
+// Copyright (C) 2011, 2012, 2013 Johan Oudinet <oudinet@cs.tum.edu>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -98,17 +98,6 @@ namespace qdft {
     void
     truncate (const cname_type& c, const quantity_type& n);
 
-		// /** 
-		//  * Remove q amount of data from c
-		//  * q might be greater than the amount of data
-		//  * if c does not exist just do nothing
-		//  * 
-		//  * @param q amount of data to remove
-		//  * @param c container's name
-		//  */
-    // void
-    // remove (const quantity_type& q, const cname_type& c);
-
 		/** 
 		 * Set the transfered edge value to a specific quantity. This is
 		 * usefull to revert a previous transfer.
@@ -136,7 +125,7 @@ namespace qdft {
 		 * @return the amount of data in c (0 if c is not in the graph)
 		 */
     quantity_type
-    get_quantity (const cname_type& c) const;
+    get_quantity (const cname_type& c);  //const; // lazy evaluation may modify the graph here
 
 		/** 
 		 * Get the total amount of data

@@ -1,4 +1,4 @@
-// Copyright (C) 2011, 2012 Johan Oudinet <oudinet@cs.tum.edu>
+// Copyright (C) 2011, 2012, 2013 Johan Oudinet <oudinet@cs.tum.edu>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -238,8 +238,8 @@ namespace qdft {
 					boost::tie (e, ok) = edge (u, vold, g_);
 				return ok? g_[e].transfered : 0;
 			}
-		quantity_type qcs = g_[u].amount;
-		quantity_type n = std::min (qcs, qa);
+		quantity_type qcs = g_[u].amount; // 0 if not computed yet.
+		quantity_type n =  std::min (qcs, qa);
 
 		// Log the action in case of a rollback
 		last_actions_.push (action::transfer (c_src, c_dst));
@@ -248,18 +248,20 @@ namespace qdft {
 		c2v_[c_dst] = v;		// reverse mapping from c to vertex
 
 		// Add a new edge from c_src to c_dst
-		add_edge (u, v, detail::transition (n), g_);
+		add_edge (u, v, detail::transition (qa), g_);
 		// And also its reverse edge for max_flow algorithms
 		add_edge (v, u, g_);
 		if (vold_ok)
 			{
 				// Add a new edge from c_old to c_dst
-				add_edge (vold, v, detail::transition (g_[vold].amount), g_);
+				add_edge (vold, v, detail::transition (std::numeric_limits<quantity_type>::max()), g_);
 				// And also its reverse edge for max_flow algorithms
 				add_edge (v, vold, g_);
 				g_[vold].fake = true;
-				// Compute the amount of data in c_dst
-				update_data_of_ (v);
+				// Mark v's amount as unknown until we compute maxflow to it
+				g_[v].amount = 0;
+				// // Compute the amount of data in c_dst
+				// update_data_of_ (v);
 				// Apply simplification rules on vold
 				apply_simplification_rules_ (vold);
 			}
@@ -279,6 +281,8 @@ namespace qdft {
 			return;
     }
     u = it->second;
+		if (g_[u].amount == 0) // compute maxflow to u to know if we must add another node
+			update_data_of_ (u);
 		if (g_[u].amount <= n) {	// n is greater than the amount of data, do nothing
 			return;
     }
@@ -350,40 +354,21 @@ namespace qdft {
 						g_[v].id = next_id_ ();
 					}
 			}
-
-		// vertex_descriptor u, v;
-		// edge_descriptor re;
-		// bool ok;
-
-		// assert (has_just_transfered_);
-		// std::cerr << "olde_: " << olde_ << " "
-		// 					<< "oldq_: " << oldq_ << std::endl;
-		// std::cerr << "newq: " << g_[olde_].transfered << std::endl;
-		// u = source (olde_, g_);
-		// v = target (olde_, g_);
-		// boost::tie (re, ok) = edge(v, u, g_);
-		// assert (ok);
-		// if (oldq_ == 0 && g_[re].transfered == 0)
-		// 	{ // Remove these two edges
-		// 		remove_edge (u, v, g_);
-		// 		remove_edge (v, u, g_);
-		// 	}
-		// else
-		// 	g_[olde_].transfered = oldq_;
-		// // update max flow
-		// update_data_of_ (v);
 	}
 
   // Get amount of data in c
   template <class Graph>
   quantity_type
-  data_manager<Graph>::get_quantity (const cname_type& c) const
+  data_manager<Graph>::get_quantity (const cname_type& c) //const
   {
     typename c2v_type::const_iterator it = c2v_.find (c);
     if (it == c2v_.end ()) // container is not inside the graph
 			return 0;
-    else
-			return g_[it->second].amount;
+    else {
+				if (g_[it->second].amount == 0) // lazy evaluation
+						update_data_of_ (it->second);
+				return g_[it->second].amount;
+		}
   }
 
 	// Get the total amount of data
@@ -512,15 +497,21 @@ namespace qdft {
 																								 (ok? g_[e3].transfered : 0)));
 					if (ok) // Update e3
 						{
-							g_[e3].transfered = std::min (g_[e2].transfered + g_[e3].transfered, g_[s].amount);
+								// \bug amount might not be accurate
+								// g_[e3].transfered = std::min (g_[e2].transfered + g_[e3].transfered, g_[s].amount);
+								g_[e3].transfered = g_[e2].transfered + g_[e3].transfered;
 						}
 					else // Create e3 only if s != t
 						{
 							if (s != t)
 								{
+								// \bug amount might not be accurate
+									// add_edge (s, t,
+									// 					detail::transition (std::min(g_[e2].transfered,
+									// 																			 g_[s].amount)),
+									// 					g_);
 									add_edge (s, t,
-														detail::transition (std::min(g_[e2].transfered,
-																												 g_[s].amount)),
+														detail::transition (g_[e2].transfered),
 														g_);
 									add_edge (t, s, g_); // fake edge for max_flow algo
 								}
@@ -533,7 +524,9 @@ namespace qdft {
 				} // end else if
 			else if (detail::real_out_degree (u, g_) == 1)
 				{ // simplification rule 3
-					bool apply_rule = true;
+					// \bug deactivate this rule if amount is unknown
+					// bool apply_rule = true;
+					bool apply_rule = g_[u].amount > 0;
 					quantity_type x = g_[u].amount;
 					vertex_descriptor s, t;
 					BGL_FORALL_OUTEDGES_T(u, e, g_, Graph)
@@ -570,9 +563,11 @@ namespace qdft {
 												(std::make_pair (g_[e].transfered, ok?g_[e2].transfered:0));
 											if (ok)
 												{ // update e2 with e
-													g_[e2].transfered =
-														std::min(g_[e2].transfered + g_[e].transfered,
-																		 g_[s].amount);
+														// \bug amount may be unknown
+													// g_[e2].transfered =
+													// 	std::min(g_[e2].transfered + g_[e].transfered,
+													// 					 g_[s].amount);
+													g_[e2].transfered += g_[e].transfered;
 												}
 											else
 												{ // create an edge between s and t
@@ -650,9 +645,11 @@ namespace qdft {
 												}
 											if (ok)
 												{ // update e2 with e
-													g_[e2].transfered =
-														std::min(g_[e2].transfered + g_[e].transfered,
-																		 g_[s].amount);
+														// \bug amount may be unknown
+													// g_[e2].transfered =
+													// 	std::min(g_[e2].transfered + g_[e].transfered,
+													// 					 g_[s].amount);
+													g_[e2].transfered += g_[e].transfered;
 												}
 											else
 												{ // create an edge between s and t
@@ -712,9 +709,11 @@ namespace qdft {
 #endif
 											// Update e2
 											quantity_type y = g_[e2].transfered;
-											g_[e2].transfered =
-												std::min(g_[e2].transfered + x,
-																 g_[s].amount);
+											// \bug amount may be unknown
+											// g_[e2].transfered =
+											// 	std::min(g_[e2].transfered + x,
+											// 					 g_[s].amount);
+											g_[e2].transfered += x;
 											add_edge (u2, t,
 																detail::transition (b),
 																g_);
