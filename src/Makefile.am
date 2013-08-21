@@ -1,4 +1,4 @@
-# Copyright (C) 2011 Johan Oudinet <oudinet@kit.edu>
+# Copyright (C) 2011, 2013 Johan Oudinet <oudinet@kit.edu>
 #  
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,10 +17,13 @@
 
 AM_CPPFLAGS = -I$(srcdir)/../include $(BOOST_CPPFLAGS)
 
-bin_PROGRAMS = example testlib
+bin_PROGRAMS = example testlib wintraceparser
 
 example_SOURCES = example.cc
 example_LDADD = ../include/libqdftgraph.la
 
 testlib_SOURCES = test_lib.cc
 testlib_LDADD = ../include/libqdftgraph.la
+
+wintraceparser_SOURCES = wintraceparser.cc
+wintraceparser_LDADD = ../include/libqdftgraph.la

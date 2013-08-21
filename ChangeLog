@@ -1,3 +1,9 @@
+2013-08-22  Johan Oudinet  <oudinet@cs.tum.edu>
+
+	Add parser for uc4win logs.
+	* src/Makefile.am: Add wintraceparser program.
+	* src/wintraceparser.cc: New.
+
 2012-11-12  Johan Oudinet  <oudinet@cs.tum.edu>
 
 	Fix a bug in simplification rule 5.
