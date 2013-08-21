@@ -1,5 +1,11 @@
 2013-08-22  Johan Oudinet  <oudinet@cs.tum.edu>
 
+	Implement lazy evaluation for C2 step.
+	* include/qdft/manager.hxx: compute maxflow iff get_quantity is
+	called on a container for which the estimated amount is unknown.
+
+2013-08-22  Johan Oudinet  <oudinet@cs.tum.edu>
+
 	Add parser for uc4win logs.
 	* src/Makefile.am: Add wintraceparser program.
 	* src/wintraceparser.cc: New.

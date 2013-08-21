@@ -127,7 +127,7 @@ namespace qdft {
 		 * @return the amount of data in c (0 if c is not in the graph)
 		 */
     quantity_type
-    get_quantity (const cname_type& c) const;
+    get_quantity (const cname_type& c);  //const; // lazy evaluation may modify the graph here
 
 		/** 
 		 * Get the total amount of data

@@ -1,4 +1,4 @@
-// Copyright (C) 2011, 2012 Johan Oudinet <oudinet@lri.fr>
+// Copyright (C) 2011, 2012, 2013 Johan Oudinet <oudinet@lri.fr>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -208,7 +208,7 @@ int main(int argc, char* argv[]) {
 	std::list<std::string> existingContainers;
 	std::list<std::string>::iterator findIter;
 	long int i=0;
-	char *secondargument="";
+	std::string secondargument;
 	unsigned sensitive_size=50000;
 	unsigned public_size=100;
 	data_managers_t dmanagers;
@@ -225,11 +225,12 @@ int main(int argc, char* argv[]) {
 #endif
 			
 	if (argc < 2) {
-		std::cout << "Too few arguments.\n\n Usage: testlib <log_file> [initial sensitive container]";
+	    std::cout << "Too few arguments." << std::endl
+		      << "Usage: " <<  argv[0] << " <log_file> [initial sensitive container]" << std::endl;
 		exit(-1);
 	}
 	
-	if (argc > 2) secondargument=strdup((char*)argv[2]);
+	if (argc > 2) secondargument = argv[2];
 
 	f.open((const char *)argv[1]);
 	
@@ -254,7 +255,7 @@ int main(int argc, char* argv[]) {
 						strcmp(tran.event,"GetClipboardData")&&
 						strcmp(tran.event,"Send")&&
 						strcmp(tran.event,"Recv"))){
-				if ((argc<3)||(strstr(tran.src, secondargument))) {
+			    if ((argc<3)||(strstr(tran.src, secondargument.c_str()))) {
 					findIter=std::find(existingContainers.begin(), existingContainers.end(), tran.src);
 					if (findIter==existingContainers.end()){
 						std::cerr<<"--> Adding "<< tran.src <<" to the list of containers (with initialization)"<< std::endl;
