@@ -12,10 +12,20 @@ Quantitive Data Flow Tracking graph (qDFTgraph) library.
 1) How to install
 2) How to use it
 
-*** HOW TO INSTALL ***
+=== HOW TO INSTALL
+===================
 
   For general free software install rules, please refer to INSTALL
-  file.  This C++ library is based on Boost Graph Library (BGL). You
+  file. The classical way of compiling is:
+  $ ./bootstrap.sh
+  $ ./configure
+  $ make
+
+  The dependencies for this C++ library are:
+  * libboost-all-dev (1.47+)
+  * tcl8.5-dev
+
+  This C++ library is based on Boost Graph Library (BGL). You
   need a recent installation of this library and in case of a manual
   installation you might need to tell to qDFTgraph where is located
   your Boost installation. For example:
@@ -24,7 +34,7 @@ Quantitive Data Flow Tracking graph (qDFTgraph) library.
   path, you may need to tell to configure how to find it. For example,
   assume BGL headers are in $HOME/include and BGL libraries are in
   $HOME/lib, the following command tell to configure where they are:
-  ./configure --with-boost=$HOME
+  $ ./configure --with-boost=$HOME
 
 ** Tips on manual installation of Boost library **
   + under a Unix-like system:
@@ -38,7 +48,8 @@ Quantitive Data Flow Tracking graph (qDFTgraph) library.
   have to tell to configure where to look for (as explained
   previously).
 
-*** HOW TO USE IT ***
+=== HOW TO USE IT
+==================
 
   qDFTgraph is a header library, then it does not need to be compiled
   first. The only thing needed is to include qdft.hh header in your
