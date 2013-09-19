@@ -473,20 +473,8 @@ namespace qdft {
 					std::cerr << "[QDFTgraph] Apply simplification rule 2 on " << g_[u].name << std::endl;
 #endif
 					// s --e1-> u --e2-> t (and may also have s --e3-> t)
-					in_edge_iterator ei, ei_end;
-					boost::tie (ei, ei_end) = in_edges (u, g_);
-					while (g_[*ei].transfered == 0)
-						++ei;
-					u_pred = source (*ei, g_);
 					edge_descriptor e1, e2, e3;
 					vertex_descriptor s, t;
-					// find e2
-					out_edge_iterator ei2, ei2_end;
-					boost::tie (ei2, ei2_end) = out_edges (u, g_);
-					while (g_[*ei2].transfered == 0)
-						++ei2;
-					e2 = *ei2;
-					t = target (e2, g_);
 					// find e1
 					in_edge_iterator ei1, ei1_end;
 					boost::tie (ei1, ei1_end) = in_edges (u, g_);
@@ -495,8 +483,17 @@ namespace qdft {
 					e1 = *ei1;
 					// define s
 					s = source (e1, g_);
+					// find e2
+					out_edge_iterator ei2, ei2_end;
+					boost::tie (ei2, ei2_end) = out_edges (u, g_);
+					while (g_[*ei2].transfered == 0)
+						++ei2;
+					e2 = *ei2;
+					// define t
+					t = target (e2, g_);
+					// find e3
 					bool ok;
-					boost::tie (e3, ok) = edge (s, target (e2, g_), g_);
+					boost::tie (e3, ok) = edge (s, t, g_);
 					// Log the action in case of a rollback
 					last_actions_.push (action::simplify2 (g_[s].name, g_[t].name,
 																								 g_[u].name, g_[u].amount,
@@ -507,7 +504,11 @@ namespace qdft {
 						{
 								// \bug amount might not be accurate
 								// g_[e3].transfered = std::min (g_[e2].transfered + g_[e3].transfered, g_[s].amount);
-								g_[e3].transfered = g_[e2].transfered + g_[e3].transfered;
+							if (g_[e3].transfered < std::numeric_limits<quantity_type>::max()
+									- std::min (g_[e1].transfered, g_[e2].transfered))
+								g_[e3].transfered += std::min (g_[e1].transfered, g_[e2].transfered);
+							else
+								g_[e3].transfered = std::numeric_limits<quantity_type>::max();
 						}
 					else // Create e3 only if s != t
 						{
@@ -526,8 +527,8 @@ namespace qdft {
 						}
 					// And remove u from g_
 					remove_vertex_ (u);
-					if (g_[u_pred].fake)
-						qv.push (u_pred);
+					if (g_[s].fake)
+						qv.push (s);
 					deleted = true;
 				} // end else if
 			else if (detail::real_out_degree (u, g_) == 1)
