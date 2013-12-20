@@ -328,7 +328,9 @@ namespace qdft {
 				// set new capacity to q
 				g_[e].transfered = q;
 				// update max flow
-				update_data_of_ (target (e, g_));
+				//update_data_of_ (target (e, g_));
+				// Mark estimation for the target node as unknown
+				g_[target (e, g_)].amount = 0;
 			}
 	}
 
