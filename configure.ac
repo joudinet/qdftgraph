@@ -43,6 +43,8 @@ BOOST_REQUIRE([1.47.0])
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 
+AC_CHECK_HEADER([tcl8.5/tcl.h], [], [AC_MSG_ERROR([tcl8.5-dev not found])])
+
 AM_CONDITIONAL([HAVE_DOXYGEN], [test -n "$DOXYGEN"])
 AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([doc/Doxyfile])])
 
