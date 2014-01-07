@@ -1,4 +1,4 @@
-// Copyright (C) 2011, 2012, 2013 Johan Oudinet <oudinet@cs.tum.edu>
+// Copyright (C) 2011, 2012, 2013, 2014 Johan Oudinet <oudinet@cs.tum.edu>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -514,7 +514,8 @@ namespace qdft {
 									// 																			 g_[s].amount)),
 									// 					g_);
 									add_edge (s, t,
-														detail::transition (g_[e2].transfered),
+														detail::transition (std::min (g_[e1].transfered,
+																													g_[e2].transfered)),
 														g_);
 									add_edge (t, s, g_); // fake edge for max_flow algo
 								}

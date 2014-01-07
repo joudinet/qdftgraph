@@ -1,4 +1,4 @@
-// Copyright (C) 2011, 2012 Johan Oudinet <oudinet@lri.fr>
+// Copyright (C) 2011, 2012, 2014 Johan Oudinet <oudinet@lri.fr>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 # define QDFT_EXAMPLE_CC
 // # include <vector>
 # include <string>
+# define DEBUG
 # include <qdft/qdft.hh>
 
 typedef qdft::data_managers<>	data_managers_t;
@@ -170,6 +171,21 @@ int main() {
   dmanagers.transfer (db1, 10, "c1", "c2");
   dmanagers.transfer (db1, 4, "c1", "c2");
 	assert (dmanagers.get_quantity (db1, "c2") == 14);
+
+	std::cerr << "=== Test for precision issue ===" << std::endl;
+	std::cerr << "================================" << std::endl;
+	qdft::dname_type db2 = dmanagers.new_data (350000, qdft::unknown,
+						   "phones");
+	for (unsigned i = 0; i < 7; ++i)
+	  dmanagers.init (db2, 5000,
+			  std::string("s") +
+			  boost::lexical_cast<std::string>(i));
+	dmanagers.transfer (db2, 4358, "s6", "c9");
+	assert (dmanagers.get_quantity (db2, "c9") == 4358);
+	dmanagers.transfer (db2, 5584, "s2", "c9");
+	std::cerr << dmanagers.get_quantity (db2, "c9") << std::endl;
+	assert (dmanagers.get_quantity (db2, "c9") == 9358);
+
 	dmanagers.show_graphs ();	
 }
 
