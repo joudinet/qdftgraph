@@ -1,4 +1,4 @@
-// Copyright (C) 2011, 2012 Johan Oudinet <oudinet@lri.fr>
+// Copyright (C) 2011, 2012, 2014 Johan Oudinet <oudinet@lri.fr>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,37 @@
 # define QDFT_TEST_LIB_CC
 # include <vector>
 # include <string>
-# define NO_SIMPLIFY
+// # define NO_SIMPLIFY
 # include <qdft/qdft.hh>
 #include <iostream>
 #include <fstream>
 #include <ctime>
 #include <boost/date_time/posix_time/posix_time.hpp>
+
+// Return used memory by pid (in MiB)
+unsigned long proc_mem_usage (int pid = getpid())
+{
+  unsigned long mem = 0;
+  std::string filename = "/proc/" +
+			  boost::lexical_cast<std::string>(pid) +
+			  "/status";
+  std::ifstream ifs (filename.c_str ());
+
+  while (ifs.good ())
+    {
+      std::string line;
+      ifs >> line;
+      if (line == "VmSize:")
+	{
+	  ifs >> mem;
+	  ifs >> line;
+	  if (line == "MB")
+	    mem *= 1024;
+	}
+    }
+  return mem / 1024;
+}
+
 #define NS (7)
 #define NC (10)
 
@@ -83,7 +108,7 @@ void block_transfer(data_managers_t& dmanagers,
 
 int main(int argc, char* argv[]) {
 
-    if ((argc < 5)||(argc > 10))
+    if ((argc < 5)||(argc > 11))
     {
 #ifndef NO_SIMPLIFY
 	std::cerr << "Simplification rules: activated\n";
@@ -101,16 +126,19 @@ int main(int argc, char* argv[]) {
 		  << "\t public_size     \t" << "maximal initial containers size, public content (default:100)\n"
 		  << "\t overwrite       \t" << "overwrite report upon update 0=NO, 1=YES (default:0)\n" 
 		  << "\t time            \t" << "save time measurement to this file (default: no time measurement)\n" 
+		  << "\t memory          \t" << "save memory usage to this file (default: no memory usage)\n" 
 		  << std::endl;
 	exit (1);
     }
 
   unsigned sensitive_size=500;
   unsigned public_size=100;
+	std::ofstream fmem;
   if (argc>6) sensitive_size = boost::lexical_cast<unsigned>(argv[6]);
   if (argc>7) public_size = boost::lexical_cast<unsigned>(argv[7]);
   if (argc>8) overwrite = boost::lexical_cast<unsigned>(argv[8]);
   if (argc>9) ftime.open (argv[9]);
+  if (argc>10) fmem.open (argv[10]);
 
   data_managers_t dmanagers;
   qdft::dname_type d = dmanagers.new_data (NS * sensitive_size, qdft::unknown, "phones");
@@ -171,6 +199,10 @@ int main(int argc, char* argv[]) {
   }
   if (argc>9) ftime.close ();
   dmanagers.show_graphs ();
+  if (argc>10) {
+    fmem << "Mem: " << proc_mem_usage () << " MiB" << std::endl;
+		fmem.close ();
+	}
 }
 
 #endif // ! QDFT_TEST_LIB_CC
