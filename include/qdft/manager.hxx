@@ -416,6 +416,14 @@ namespace qdft {
     write_graphviz_dp(out, g_, dp);
   }
 
+  template <class Graph>
+  std::pair<typename data_manager<Graph>::vertices_size_type,
+						typename data_manager<Graph>::edges_size_type>
+	data_manager<Graph>::get_graph_size () const
+	{
+		return std::make_pair (num_vertices (g_), num_edges (g_));
+	}
+
   // Remove vertex u from the internal graph
   template <class Graph>
   void data_manager<Graph>::remove_vertex_ (vertex_descriptor u)

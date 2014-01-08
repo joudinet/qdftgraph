@@ -1,4 +1,4 @@
-// Copyright (C) 2011, 2012 Johan Oudinet <oudinet@lri.fr>
+// Copyright (C) 2011, 2012, 2014 Johan Oudinet <oudinet@lri.fr>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,6 +43,9 @@ namespace qdft {
 	public:
 		typedef boost::unordered_map<
 			dname_type, data_manager_ptr>							data_managers_t;
+    typedef boost::graph_traits<Graph> Traits;
+    typedef typename Traits::vertices_size_type	vertices_size_type;
+    typedef typename Traits::edges_size_type	edges_size_type;
 
 		/** 
 		 * Create a new data of size q (and set mode m for further updates)
@@ -105,18 +108,6 @@ namespace qdft {
     void
     truncate (const dname_type& d, const cname_type& c, const quantity_type& n);
 
-		// /** 
-		//  * Remove q amount of data d from c
-		//  * q might be greater than the amount of data
-		//  * if c does not exist just do nothing
-		//  * 
- 		//  * @param d the data name
-		//  * @param q amount of data to remove
-		//  * @param c container's name
-		//  */
-    // void
-    // remove (const dname_type& d, const quantity_type& q, const cname_type& c);
-
 		/** 
 		 * Set the transfered edge value to a specific quantity. This is
 		 * usefull to revert a previous transfer.
@@ -174,6 +165,11 @@ namespace qdft {
 		 * @param fname file name
 		 */
     void save (const std::string& fname) const;
+
+		/** 
+		 * Get the total number of nodes and edges for all graphs
+		 */
+    std::pair<vertices_size_type, edges_size_type> get_graphs_size () const;
 
 	private:
 		data_managers_t dm_;

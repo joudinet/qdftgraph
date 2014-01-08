@@ -1,4 +1,4 @@
-// Copyright (C) 2011, 2012 Johan Oudinet <oudinet@kit.edu>
+// Copyright (C) 2011, 2012, 2014 Johan Oudinet <oudinet@kit.edu>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -206,6 +206,22 @@ namespace qdft {
 		fs.open (fname.c_str (), std::fstream::out);
 		show_graphs (fs);
 		fs.close ();
+	}
+
+  template <class Graph>
+	std::pair<typename data_managers<Graph>::vertices_size_type,
+						typename data_managers<Graph>::edges_size_type>
+	data_managers<Graph>::get_graphs_size () const
+	{
+		vertices_size_type n = 0;
+		edges_size_type m = 0;
+		BOOST_FOREACH(typename data_managers_t::value_type i, dm_) {
+			std::pair<vertices_size_type, edges_size_type> p =
+				i.second->get_graph_size ();
+			n += p.first;
+			m += p.second;
+		}
+		return std::make_pair (n, m);
 	}
 
 } // end namespace qdft
