@@ -1,4 +1,4 @@
-// Copyright (C) 2011, 2012, 2013 Johan Oudinet <oudinet@cs.tum.edu>
+// Copyright (C) 2011, 2012, 2013, 2014 Johan Oudinet <oudinet@cs.tum.edu>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,6 +44,8 @@ namespace qdft {
     typedef typename Traits::edge_descriptor edge_descriptor;
     typedef typename Traits::in_edge_iterator in_edge_iterator;
     typedef typename Traits::out_edge_iterator out_edge_iterator;
+    typedef typename Traits::vertices_size_type	vertices_size_type;
+    typedef typename Traits::edges_size_type	edges_size_type;
     typedef boost::unordered_map<cname_type, vertex_descriptor> c2v_type;
 
 		/** 
@@ -141,6 +143,11 @@ namespace qdft {
 		 * @param out the ouput stream (default is std::out)
 		 */
     void show_graph (std::ostream& out = std::cout) const;
+
+		/** 
+		 * Get the number of nodes and edges in the graph
+		 */
+		std::pair<vertices_size_type, edges_size_type> get_graph_size () const;
 
   private:
     mutable Graph		g_;

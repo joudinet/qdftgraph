@@ -55,6 +55,8 @@ unsigned long proc_mem_usage (int pid = getpid())
 using namespace boost::posix_time;
 
 typedef qdft::data_managers<>	data_managers_t;
+typedef data_managers_t::vertices_size_type vertices_size_type;
+typedef data_managers_t::edges_size_type edges_size_type;
 
 int overwrite=0;
 std::ofstream ftime;
@@ -200,6 +202,11 @@ int main(int argc, char* argv[]) {
   if (argc>9) ftime.close ();
   dmanagers.show_graphs ();
   if (argc>10) {
+		vertices_size_type n;
+		edges_size_type m;
+		boost::tie(n, m) = dmanagers.get_graphs_size ();
+    fmem << "GraphNodes: " << n << std::endl;
+    fmem << "GraphEdges: " << m << std::endl;
     fmem << "Mem: " << proc_mem_usage () << " MiB" << std::endl;
 		fmem.close ();
 	}
