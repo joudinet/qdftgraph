@@ -1,4 +1,4 @@
-# Copyright (C) KIT, Johan Oudinet <oudinet@kit.edu> - 2011, 2013
+# Copyright (C) KIT, Johan Oudinet <oudinet@kit.edu> - 2011, 2013, 2014
 #  
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@ AC_PREREQ(2.61)
 AC_INIT([qdftgraph], [0.4], [oudinet@kit.edu])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
+AM_PROG_AR
 AM_INIT_AUTOMAKE([1.10 -Wall -Werror tar-ustar no-define dist-bzip2 nostdinc])
 LT_INIT([disable-static])
 
