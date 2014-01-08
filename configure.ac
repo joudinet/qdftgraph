@@ -26,10 +26,16 @@ LT_INIT([disable-static])
 AC_PROG_CXX
 
 # Documentation
-AC_CHECK_PROGS([DOXYGEN], [doxygen])
-if test -z "$DOXYGEN";
-	 then AC_MSG_WARN([Doxygen not found - continuing without Doxygen support])
-fi
+AC_ARG_ENABLE([documentation],
+	[AS_HELP_STRING([--disable-documentation],
+	[Do not build documentation])])
+AS_IF([test "x$enable_documentation" != xno],
+	    [AC_CHECK_PROGS([DOXYGEN], [doxygen])
+	    if test -z "$DOXYGEN"; then
+	      AC_MSG_WARN(
+	      [Doxygen not found - continuing without Doxygen support])
+	    fi
+	    ])
 
 # Attempt to use strict language conformance checking.
 AC_CXX_FLAGS
@@ -44,7 +50,9 @@ BOOST_REQUIRE([1.47.0])
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 
-AC_CHECK_HEADER([tcl8.5/tcl.h], [], [AC_MSG_ERROR([tcl8.5-dev not found])])
+dnl AC_CHECK_HEADER([tcl8.5/tcl.h], [], [AC_MSG_ERROR([tcl8.5-dev not found])])
+AC_CHECK_HEADERS_ONCE([tcl8.5/tcl.h])
+AM_CONDITIONAL([HAVE_TCL_H], [test "${ac_cv_header_tcl8_5_tcl_h}" = yes])
 
 AM_CONDITIONAL([HAVE_DOXYGEN], [test -n "$DOXYGEN"])
 AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([doc/Doxyfile])])

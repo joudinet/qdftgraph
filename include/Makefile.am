@@ -1,4 +1,4 @@
-# Copyright (C) 2011, 2012 Johan Oudinet <oudinet@cs.tum.edu>
+# Copyright (C) 2011, 2012, 2014 Johan Oudinet <oudinet@cs.tum.edu>
 #  
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,22 +19,25 @@ AM_CPPFLAGS = -I$(srcdir)/../include $(BOOST_CPPFLAGS)
 
 lib_LTLIBRARIES = libqdftgraph.la
 
-libqdftgraph_la_SOURCES =												\
-qdft/action.hh																	\
-qdft/graph.hh																		\
-qdft/manager.hh																	\
-qdft/manager.hxx																\
-qdft/qdft.hh																		\
-qdft/qdft.hxx																		\
-qdft/types.hh																		\
-qdft/qdft_wrap.cxx
+libqdftgraph_la_SOURCES =			\
+qdft/action.hh					\
+qdft/graph.hh					\
+qdft/manager.hh					\
+qdft/manager.hxx				\
+qdft/qdft.hh					\
+qdft/qdft.hxx					\
+qdft/types.hh
+
+if HAVE_TCL_H
+libqdftgraph_la_SOURCES += qdft/qdft_wrap.cxx
+endif
 
 libqdftgraph_la_LDFLAGS = -no-undefined
 
-nobase_include_HEADERS =												\
-qdft/qdft.i																			\
-qdft/libqdftgraph.cs														\
-qdft/libqdftgraphPINVOKE.cs											\
-qdft/dataManagers.cs														\
-qdft/mode_type.cs																\
+nobase_include_HEADERS =			\
+qdft/qdft.i					\
+qdft/libqdftgraph.cs				\
+qdft/libqdftgraphPINVOKE.cs			\
+qdft/dataManagers.cs				\
+qdft/mode_type.cs				\
 qdft/SWIGTYPE_p_std__ostream.cs
