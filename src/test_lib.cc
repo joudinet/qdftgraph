@@ -192,9 +192,9 @@ int main(int argc, char* argv[]) {
       }
       unsigned r = (std::rand() % public_size) + 1;
       std::cerr << i << ": transferring " << r << " from " << c1 << " to " << c2 << std::endl;
-      // block_transfer (dmanagers, d, c1, c2, r, block_size, (argc > 9), i);
       ptime before (microsec_clock::local_time());
-      dmanagers.transfer (d, r, c1, c2);
+      // dmanagers.transfer (d, r, c1, c2);
+      block_transfer (dmanagers, d, c1, c2, r, block_size, (argc > 9), i);
       ptime after (microsec_clock::local_time());
       time_duration td = after - before;
       if (argc>9) ftime << i << ": " << td.total_microseconds () << std::endl;
